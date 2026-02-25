@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aguadulce (Almería) | G&G House</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --verde-oscuro: #004d40;
+            --dorado: #b8860b;
+            --blanco-roto: #e0f2f1;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+            background-image: url('agua1.webp');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: var(--verde-oscuro);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Quitamos el overlay para un blanco puro */
+        body::before {
+            display: none;
+        }
+
+        .header-buttons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .btn-home img {
+            width: 60px;
+            transition: 0.3s;
+        }
+
+        .coming-soon-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .coming-soon-container h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            letter-spacing: 15px;
+            margin: 0;
+            /* Dorado más intenso para que resalte en blanco */
+            background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b, #ffd700, #b8860b);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 2.5s linear infinite;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .line {
+            width: 120px;
+            height: 2px;
+            background: var(--dorado);
+            margin: 30px auto;
+        }
+
+        .subtitle {
+            font-weight: 400;
+            letter-spacing: 5px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            color: var(--verde-oscuro);
+        }
+
+        /* ESTILOS PARA LA VERSIÓN PUBLICADA (STANDBY) */
+        .published-only {
+            display: none;
+        }
+    </style>
+</head>
+
+<body onpointerdown="initAudio()">
+    <audio id="bgMusic" loop>
+        <source src="bensound-slowmotion.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="music-control" onclick="toggleMusic(event)">
+        <span id="musicIcon">🔇</span>
+    </div>
+
+    <header class="header-buttons">
+        <a href="../index.html" class="btn-home"><img src="G&G.png" alt="Inicio"></a>
+    </header>
+
+    <div class="coming-soon-container">
+        <h1>PRÓXIMAMENTE</h1>
+        <div class="line"></div>
+        <p class="subtitle">CALIDAD & CONFORT EN ALMERÍA</p>
+    </div>
+
+    <!-- SECCIÓN EN STANDBY (OCULTA HASTA PUBLICACIÓN)
+    <section class="hero-section">
+        <h1>Aguadulce (Almería)</h1>
+        <div style="letter-spacing: 5px; color: #666; text-transform: uppercase; font-size: 0.8rem;">G&G House | El
+            Mediterráneo</div>
+    </section>
+
+    <nav class="grid-estancias">
+        ... (contenido comentado para mantenimiento futuro)
+    </nav>
+    -->
+
+    <script>
+        // Maximizamos las posibilidades de que suene al entrar
+        const events = ['click', 'mousemove', 'touchstart', 'scroll', 'keydown'];
+        events.forEach(event => {
+            document.body.addEventListener(event, initAudio, { once: true });
+        });
+
+        function startSlides() {
+            const cards = ['cardHabitaciones', 'cardSalon', 'cardOtras', 'cardEntorno'];
+            cards.forEach(id => {
+                const card = document.getElementById(id);
+                if (!card) return;
+                const slides = card.querySelectorAll('.mini-slide');
+                let cur = 0;
+                if (slides.length > 1) {
+                    setInterval(() => {
+                        slides[cur].classList.remove('active');
+                        cur = (cur + 1) % slides.length;
+                        slides[cur].classList.add('active');
+                    }, 3000);
+                }
+            });
+        }
+
+        const music = document.getElementById('bgMusic');
+        const musicIcon = document.getElementById('musicIcon');
+        let audioIniciado = false;
+
+        function initAudio() {
+            if (!audioIniciado) {
+                music.play().catch(e => console.log("Esperando interacción..."));
+                music.volume = 0.5;
+                musicIcon.innerText = "🔊";
+                audioIniciado = true;
+            }
+        }
+
+        function toggleMusic(e) {
+            e.stopPropagation();
+            if (music.paused) {
+                music.play();
+                musicIcon.innerText = "🔊";
+            } else {
+                music.pause();
+                musicIcon.innerText = "🔇";
+            }
+        }
+
+        function abrirBanda() {
+            initAudio();
+            if (music.paused) music.play();
+
+            const banda = document.getElementById('bandaCine');
+            const texto = document.getElementById('textoCine');
+
+            banda.classList.add('open');
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                // Lo ponemos a 30s para una lectura perfecta
+                texto.style.animation = "creditsScroll 30s linear forwards";
+                texto.classList.add('animating');
+            }, 700);
+
+            // Cerrar automáticamente cuando termine el scroll
+            texto.addEventListener('animationend', () => {
+                // Esperamos 2 segundos después de que el texto desaparezca
+                setTimeout(() => {
+                    banda.classList.remove('open');
+                    texto.classList.remove('animating');
+                    texto.style.animation = ""; // Reset de la animación
+                }, 2000);
+            }, { once: true });
+        }
+
+        window.onload = startSlides;
+    </script>
+</body>
+
+</html>
